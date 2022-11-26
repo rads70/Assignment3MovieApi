@@ -91,7 +91,7 @@ namespace Assignment3MovieApi.Controllers
         }
 
         /// <summary>
-        /// Edit movie parameters
+        /// Update movie
         /// </summary>
         /// <param name="id">Movie Id</param>
         /// <param name="movie">Full movie object in body</param>
@@ -133,7 +133,7 @@ namespace Assignment3MovieApi.Controllers
         }
 
         /// <summary>
-        /// Updates characters in a movie
+        /// Assigns characters to a movie
         /// </summary>
         /// <param name="id">Movie Id</param>
         /// <param name="characterIds">Array of character Ids</param>
@@ -175,7 +175,7 @@ namespace Assignment3MovieApi.Controllers
         /// <summary>
         /// Add a movie to the database
         /// </summary>
-        /// <param name="movie"></param>
+        /// <param name="movie">Full movie object</param>
         /// <returns></returns>
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

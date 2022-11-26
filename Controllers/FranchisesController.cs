@@ -15,6 +15,8 @@ namespace Assignment3MovieApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class FranchisesController : ControllerBase
     {
         private readonly MoviesContext _context;
@@ -27,7 +29,7 @@ namespace Assignment3MovieApi.Controllers
         }
 
         /// <summary>
-        /// Returns all franchises with movie IDs
+        /// Get all franchises in database
         /// </summary>
         /// <returns>All Franchsises in database</returns>
         // GET: api/Franchises
@@ -42,7 +44,7 @@ namespace Assignment3MovieApi.Controllers
         }
 
         /// <summary>
-        /// Get Franchise by ID
+        /// Get Franchise by Id
         /// </summary>
         /// <param name="id">Franchise Id</param>
         /// <returns>Franchise</returns>
@@ -143,7 +145,6 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="franchise">Complete franchise object</param>
         /// <returns></returns>
         // PUT: api/Franchises/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

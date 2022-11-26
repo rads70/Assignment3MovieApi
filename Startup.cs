@@ -39,7 +39,7 @@ namespace Assignment3MovieApi
                 {
                     Title = "Assignment3",
                     Version = "v1",
-                    Description = "ASP.NET Core Movie Characters API",
+                    Description = "ASP.NET Core Movies API",
                     Contact = new OpenApiContact
                     {
                         Name = "Contact",
