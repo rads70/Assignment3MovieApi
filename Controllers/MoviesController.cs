@@ -35,9 +35,9 @@ namespace Assignment3MovieApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReadMovieDTO>>> GetMovies()
+        public async Task<ActionResult<IEnumerable<MovieReadDTO>>> GetMovies()
         {
-            return _mapper.Map<List<Movie>, List<ReadMovieDTO>>(await _context.Movies.ToListAsync());
+            return _mapper.Map<List<Movie>, List<MovieReadDTO>>(await _context.Movies.Include(mo=> mo.Characters).ToListAsync());
         }
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace Assignment3MovieApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
+        public async Task<ActionResult<MovieReadDTO>> GetMovie(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = _mapper.Map<MovieReadDTO>(await _context.Movies.Include(mo => mo.Characters).Where(mo => mo.Id == id).FirstOrDefaultAsync());
 
             if (movie == null)
             {
@@ -69,20 +69,31 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Movie Id</param>
         /// <returns></returns>
         [HttpGet("{id}/characters")]
-        public async Task<ActionResult> GetMovieCharacters (int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<List<MovieCharacterReadDTO>>> GetMovieCharacters (int id)
         {
+            if (!MovieExists(id)) return BadRequest();
 
             // Get all characters in a movie
             var movie = await _context.Movies.Include(m => m.Characters).Where(m => m.Id == id).FirstOrDefaultAsync();
-            return NoContent();
-           
 
+            List<Character> domainCharacters = new List<Character>();
+            foreach(var character in movie.Characters)
+            {
+                domainCharacters.Add(character);  
+            }
+
+            var characters = _mapper.Map<List<MovieCharacterReadDTO>>(domainCharacters);
+
+            return characters;
+           
         }
 
         /// <summary>
         /// Edit movie parameters
         /// </summary>
-        /// <param name="id">Movie Id in path</param>
+        /// <param name="id">Movie Id</param>
         /// <param name="movie">Full movie object in body</param>
         /// <returns></returns>
         /// 
@@ -92,13 +103,13 @@ namespace Assignment3MovieApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutMovie(int id, [FromBody] UpdateMovieDTO movie)
+        public async Task<IActionResult> PutMovie(int id, [FromBody] MovieUpdateDTO movie)
         {
             if (id != movie.Id)
             {
                 return BadRequest();
             }
-            var domainMovie = _mapper.Map<UpdateMovieDTO, Movie>(movie);
+            var domainMovie = _mapper.Map<MovieUpdateDTO, Movie>(movie);
 
             _context.Entry(domainMovie).State = EntityState.Modified;
 
@@ -122,9 +133,9 @@ namespace Assignment3MovieApi.Controllers
         }
 
         /// <summary>
-        /// Assigns Characters to a movie
+        /// Updates characters in a movie
         /// </summary>
-        /// <param name="id">Movie Id </param>
+        /// <param name="id">Movie Id</param>
         /// <param name="characterIds">Array of character Ids</param>
         /// <returns></returns>
         [HttpPut("{id}/characters")]
@@ -171,9 +182,9 @@ namespace Assignment3MovieApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ReadMovieDTO>> PostMovie(CreateMovieDTO movie)
+        public async Task<ActionResult<MovieReadDTO>> PostMovie(MovieCreateDTO movie)
         {
-            var domainMovie = _mapper.Map<CreateMovieDTO, Movie>(movie);
+            var domainMovie = _mapper.Map<MovieCreateDTO, Movie>(movie);
 
             _context.Movies.Add(domainMovie);
             await _context.SaveChangesAsync();

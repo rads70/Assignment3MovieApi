@@ -29,12 +29,13 @@ namespace Assignment3MovieApi.Controllers
         /// <summary>
         /// Returns all franchises with movie IDs
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All Franchsises in database</returns>
         // GET: api/Franchises
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReadFranchiseDTO>>> GetFranchises()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<FranchiseReadDTO>>> GetFranchises()
         {
-            var franchises =  _mapper.Map<List<ReadFranchiseDTO>>(await _context.Franchises
+            var franchises =  _mapper.Map<List<FranchiseReadDTO>>(await _context.Franchises
                 .Include(fr => fr.Movies).ToListAsync());
 
             return franchises;
@@ -44,12 +45,14 @@ namespace Assignment3MovieApi.Controllers
         /// Get Franchise by ID
         /// </summary>
         /// <param name="id">Franchise Id</param>
-        /// <returns></returns>
+        /// <returns>Franchise</returns>
         // GET: api/Franchises/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ReadFranchiseDTO>> GetFranchise(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<FranchiseReadDTO>> GetFranchise(int id)
         {
-            var franchise = _mapper.Map<ReadFranchiseDTO>( await _context.Franchises.Include(fr=> fr.Movies).Where(fr => fr.Id == id).FirstOrDefaultAsync());
+            var franchise = _mapper.Map<FranchiseReadDTO>( await _context.Franchises.Include(fr=> fr.Movies).Where(fr => fr.Id == id).FirstOrDefaultAsync());
 
             if (franchise == null)
             {
@@ -60,33 +63,101 @@ namespace Assignment3MovieApi.Controllers
         }
 
         /// <summary>
-        /// Get movies from a Franchise
+        /// Get all movies in a franchise
         /// </summary>
         /// <param name="id">Franchise Id</param>
         /// <returns>Movies from the selected franchise</returns>
         //GET: api/Franchises/Movies/5
         [HttpGet("Movies/{id}")]
-        public async Task<ActionResult<List<ReadMovieDTO>>> GetFranchiseMovies(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<MovieReadDTO>>> GetFranchiseMovies(int id)
         {
             if (!FranchiseExists(id)) return NotFound();
+            var movies = _mapper.Map<List<MovieReadDTO>> (await _context.Movies.Include(mo=> mo.Characters).Where(mo => mo.FranchiseId == id).ToListAsync());
 
-           var movies = await _context.Movies.Where(m => m.FranchiseId == id).ToListAsync();
+            return movies;
 
-           return _mapper.Map<List<ReadMovieDTO>>(movies);
         }
 
+        /// <summary>
+        /// Get all characters in franchise
+        /// </summary>
+        /// <param name="id">Franchise Id</param>
+        /// <returns>List of characters</returns>
+        [HttpGet("Characters/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<List<MovieCharacterReadDTO>>> GetFranchiseCharacters(int id)
+        {
+            if(!FranchiseExists(id)) return BadRequest();
 
+            var movies = await _context.Movies.Include(mo => mo.Characters).Where(mo => mo.FranchiseId == id).ToListAsync();
+
+            List<Character> characters = new List<Character>();
+
+            foreach (var mo in movies)
+            {
+                foreach (var character in mo.Characters)
+                {
+                    characters.Add(character);
+                }
+            }
+
+            return _mapper.Map<List<MovieCharacterReadDTO>>(characters);
+
+
+        }
+
+        /// <summary>
+        /// Create new franchise
+        /// </summary>
+        /// <param name="franchise">Franchise object</param>
+        /// <returns>Created franchise</returns>
+        // POST: api/Franchises
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult<FranchiseReadDTO>> PostFranchise(FranchiseCreateDTO franchise)
+        {
+            var domainFranchise = _mapper.Map<Franchise>(franchise);
+
+            _context.Franchises.Add(domainFranchise);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+           
+
+            return CreatedAtAction("GetFranchise", new { id = domainFranchise.Id }, domainFranchise);
+        }
+
+        /// <summary>
+        /// Update a franchise
+        /// </summary>
+        /// <param name="id">Franchise Id</param>
+        /// <param name="franchise">Complete franchise object</param>
+        /// <returns></returns>
         // PUT: api/Franchises/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFranchise(int id, Franchise franchise)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> PutFranchise(int id, FranchiseUpdateDTO franchise)
         {
             if (id != franchise.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(franchise).State = EntityState.Modified;
+            var domainFranchise = _mapper.Map<Franchise>(franchise);
+
+            _context.Entry(domainFranchise).State = EntityState.Modified;
 
             try
             {
@@ -107,19 +178,55 @@ namespace Assignment3MovieApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Franchises
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Franchise>> PostFranchise(Franchise franchise)
+        /// <summary>
+        /// Assign movies to a franchise
+        /// </summary>
+        /// <param name="id">Franchise Id</param>
+        /// <param name="movieIds">Array of movie Ids</param>
+        /// <returns> No Content</returns>
+        [HttpPut("movies/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> AssignMoviesToFranchise(int id, int[] movieIds)
         {
-            _context.Franchises.Add(franchise);
-            await _context.SaveChangesAsync();
+            if(!FranchiseExists(id)) return BadRequest();
 
-            return CreatedAtAction("GetFranchise", new { id = franchise.Id }, franchise);
+            var franchise = await _context.Franchises
+                .Include(fr => fr.Movies).Where(fr => fr.Id == id)
+                .FirstOrDefaultAsync();
+
+            foreach(int movId in movieIds)
+            {
+                var movie = await _context.Movies.FindAsync(movId);
+                if (movie == null) return NotFound("Movie does not exist");
+
+                franchise.Movies.Add(movie);
+            }
+
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
         }
 
+        
+        /// <summary>
+        /// Deletes a franchise by Id
+        /// </summary>
+        /// <param name="id">Franchise Id</param>
+        /// <returns></returns>
         // DELETE: api/Franchises/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteFranchise(int id)
         {
             var franchise = await _context.Franchises.FindAsync(id);

@@ -26,9 +26,13 @@ namespace Assignment3MovieApi.Models
         [MaxLength(255)]
         public string Trailer { get; set; }
 
+        // Foreign key Franchise set nullable
         public int? FranchiseId { get; set; }
+
+        // Navigation property one to many Movies - Franchises
         public Franchise Franchise { get; set; }
 
+        // Naviagtion property many to many realtionship to Characters
         public ICollection<Character> Characters { get; set; }
     }
 }

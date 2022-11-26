@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Assignment3MovieApi.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Assignment3MovieApi.Models
+namespace Assignment3MovieApi.DTOs.FranchiseDTOs
 {
-    public class Franchise
+    public class FranchiseReadDTO
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -15,7 +15,7 @@ namespace Assignment3MovieApi.Models
         [MaxLength(500)]
         public string Description { get; set; }
 
-        // Navigation property one to many relationship Movies - Farnchises
-        public ICollection<Movie> Movies { get; set; }
+        // Movie Ids as int array
+        public int[] Movies { get; set; }
     }
 }

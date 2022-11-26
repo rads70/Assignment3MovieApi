@@ -1,10 +1,8 @@
-﻿using Assignment3MovieApi.Models;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Assignment3MovieApi.DTOs.FranchiseDTOs
 {
-    public class ReadFranchiseDTO
+    public class FranchiseUpdateDTO
     {
         public int Id { get; set; }
 
@@ -14,7 +12,5 @@ namespace Assignment3MovieApi.DTOs.FranchiseDTOs
 
         [MaxLength(500)]
         public string Description { get; set; }
-
-        public int[] Movies { get; set; }
     }
 }

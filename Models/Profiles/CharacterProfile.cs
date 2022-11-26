@@ -8,9 +8,13 @@ namespace Assignment3MovieApi.Models.Profiles
     {
         public CharacterProfile()
         {
-            CreateMap<Character, ReadCharacterDTO>()
+            CreateMap<Character, CharacterReadDTO>()
                 .ForMember(charDto => charDto.Movies, opt => opt
                 .MapFrom(ch => ch.Movies.Select(mo => mo.Id).ToArray()));
+
+            CreateMap<CharacterCreateDTO, Character>();
+            CreateMap<CharacterUpdateDTO, Character>(); 
+           
         }
     }
 }

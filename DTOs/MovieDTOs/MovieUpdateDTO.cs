@@ -2,7 +2,7 @@
 
 namespace Assignment3MovieApi.DTOs.MovieDTOs
 {
-    public class UpdateMovieDTO
+    public class MovieUpdateDTO
     {
         public int Id { get; set; }
 

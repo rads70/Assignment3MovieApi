@@ -10,6 +10,7 @@ namespace Assignment3MovieApi.Data
         // Constructor to use for injecting connection string
         public MoviesContext(DbContextOptions<MoviesContext> options) : base(options) { }
 
+        // Db sets for database
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Character> Characters { get; set; }
         public DbSet<Franchise> Franchises { get; set; }
@@ -18,7 +19,7 @@ namespace Assignment3MovieApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-
+            // Data seeding
             modelBuilder.Entity<Franchise>().HasData(new Franchise { Id = 1, Name = "Warner Bros", Description = "Big movie company" });
             modelBuilder.Entity<Franchise>().HasData(new Franchise { Id = 2, Name = "Paramount Pictures", Description = "Another big movie company" });
 

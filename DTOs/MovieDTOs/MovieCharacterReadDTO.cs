@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Assignment3MovieApi.Models
+namespace Assignment3MovieApi.DTOs.MovieDTOs
 {
-    public class Character
+    public class MovieCharacterReadDTO
     {
-
-        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -21,8 +18,5 @@ namespace Assignment3MovieApi.Models
 
         [MaxLength(255)]
         public string Picture { get; set; }
-
-        // Navigation property many to many relationship to Movies
-        public ICollection<Movie> Movies { get; set; }
     }
 }

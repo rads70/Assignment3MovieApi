@@ -8,9 +8,12 @@ namespace Assignment3MovieApi.Models.Profiles
     {
         public FranchiseProfile()
         {
-            CreateMap<Franchise, ReadFranchiseDTO>()
+            CreateMap<Franchise, FranchiseReadDTO>()
                 .ForMember(frDto => frDto.Movies, opt => opt
                 .MapFrom(fr => fr.Movies.Select(moObj => moObj.Id).ToArray()));
+
+            CreateMap<FranchiseCreateDTO, Franchise>();
+            CreateMap<FranchiseUpdateDTO, Franchise>();
                 
         }
     }

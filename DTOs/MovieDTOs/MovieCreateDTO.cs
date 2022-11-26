@@ -4,10 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Assignment3MovieApi.DTOs.MovieDTOs
 {
-    public class ReadMovieDTO
+    public class MovieCreateDTO
     {
-        public int Id { get; set; }
-
+       
         [Required]
         [MaxLength(100)]
         public string MovieTitle { get; set; }
@@ -26,6 +25,5 @@ namespace Assignment3MovieApi.DTOs.MovieDTOs
         [MaxLength(255)]
         public string Trailer { get; set; }
 
-        public int FranchiseId { get; set; }
     }
 }

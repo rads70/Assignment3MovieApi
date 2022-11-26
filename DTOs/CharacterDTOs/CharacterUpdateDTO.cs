@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Assignment3MovieApi.DTOs.CharacterDTOs
 {
-    public class ReadCharacterDTO
+    public class CharacterUpdateDTO
     {
         public int Id { get; set; }
 
@@ -21,6 +21,5 @@ namespace Assignment3MovieApi.DTOs.CharacterDTOs
         [MaxLength(255)]
         public string Picture { get; set; }
 
-        public int[] Movies { get; set; }
     }
 }
