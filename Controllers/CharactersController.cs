@@ -29,7 +29,8 @@ namespace Assignment3MovieApi.Controllers
         /// <summary>
         /// Get all characters from database
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All characters in database</returns>
+        /// /// <response code="200">Returns array of characters</response>
         // GET: api/Characters
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)] 
@@ -42,7 +43,9 @@ namespace Assignment3MovieApi.Controllers
         /// Get character by Id
         /// </summary>
         /// <param name="id">Character Id</param>
-        /// <returns></returns>
+        /// <returns>Character</returns>
+        /// <response code="200">Returns character matching Id</response>
+        /// <response code="404">If character not found</response>
         // GET: api/Characters/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -62,9 +65,12 @@ namespace Assignment3MovieApi.Controllers
         /// <summary>
         /// Update a character
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">character Id</param>
         /// <param name="character">full character object</param>
-        /// <returns></returns>
+        /// <returns>No content</returns>
+        /// <response code="204">Returns no content</response>
+        /// <response code="400">Id param does not match character id in object</response>
+        /// <response code="404">If character not found</response>
         // PUT: api/Characters/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -77,7 +83,9 @@ namespace Assignment3MovieApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(character).State = EntityState.Modified;
+            var domainCharacter = _mapper.Map<Character>(character);
+
+            _context.Entry(domainCharacter).State = EntityState.Modified;
 
             try
             {
@@ -102,10 +110,11 @@ namespace Assignment3MovieApi.Controllers
         /// Create a new character
         /// </summary>
         /// <param name="character"></param>
-        /// <returns></returns>
+        /// <returns>character obect</returns>
+        /// <response code="201">Returns created character</response>
         // POST: api/Characters
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<CharacterReadDTO>> PostCharacter(CharacterCreateDTO character)
         {
             var domainCharacter = _mapper.Map<Character>(character);
@@ -121,6 +130,8 @@ namespace Assignment3MovieApi.Controllers
         /// </summary>
         /// <param name="id">Character Id</param>
         /// <returns></returns>
+        /// <response code="204">Returns no content</response>
+        /// <response code="404">If character not found in database</response>
         // DELETE: api/Characters/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

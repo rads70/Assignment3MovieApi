@@ -32,7 +32,8 @@ namespace Assignment3MovieApi.Controllers
         /// <summary>
         /// Get all movies in database
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All movies in database</returns>
+        /// <response code="200">Returns all movies in Database</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<MovieReadDTO>>> GetMovies()
@@ -45,10 +46,12 @@ namespace Assignment3MovieApi.Controllers
         /// </summary>
         /// <param name="id">Movie id as integer</param>
         /// <returns></returns>
+        /// <response code="200">Returns movie with given id</response>
+        /// <response code="404">Movie not found</response>
+
         // GET: api/Movies/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<MovieReadDTO>> GetMovie(int id)
         {
@@ -67,7 +70,9 @@ namespace Assignment3MovieApi.Controllers
         /// Gets Characters for a selected Movie
         /// </summary>
         /// <param name="id">Movie Id</param>
-        /// <returns></returns>
+        /// <returns>Characters in movie</returns>
+        /// <response code="200">Returns characters in movie</response>
+        /// <response code="400">Invalid movie Id</response>
         [HttpGet("{id}/characters")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -96,9 +101,10 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Movie Id</param>
         /// <param name="movie">Full movie object in body</param>
         /// <returns></returns>
-        /// 
+        /// <response code="204">Movie updated</response>
+        /// <response code="400">Id param does not match Movie object Id</response>
+        /// <response code="404">Movie not found in database</response>
         // PUT: api/Movies/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -136,8 +142,10 @@ namespace Assignment3MovieApi.Controllers
         /// Assigns characters to a movie
         /// </summary>
         /// <param name="id">Movie Id</param>
-        /// <param name="characterIds">Array of character Ids</param>
+        /// <param name="characterIds">Array of character Ids¨as integers</param>
         /// <returns></returns>
+        /// <response code="204">Characters assigned to movie</response>
+        /// <response code="400">Movie Id invalid</response>
         [HttpPut("{id}/characters")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -176,12 +184,11 @@ namespace Assignment3MovieApi.Controllers
         /// Add a movie to the database
         /// </summary>
         /// <param name="movie">Full movie object</param>
-        /// <returns></returns>
+        /// <returns>Created movie</returns>
+        /// <response code="201">Movie created</response>
         // POST: api/Movies
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<MovieReadDTO>> PostMovie(MovieCreateDTO movie)
         {
             var domainMovie = _mapper.Map<MovieCreateDTO, Movie>(movie);
@@ -196,7 +203,9 @@ namespace Assignment3MovieApi.Controllers
         /// Deletes movie from database
         /// </summary>
         /// <param name="id">Movie Id as integer</param>
-        /// <returns></returns>
+        /// <returns>No content</returns>
+        /// <response code="204">Movie deleted</response>
+        /// <response code="404">Movie not found</response>
         // DELETE: api/Movies/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
