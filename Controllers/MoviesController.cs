@@ -101,9 +101,10 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Movie Id</param>
         /// <param name="movie">Full movie object in body</param>
         /// <returns></returns>
-        /// <response code="204">Movie updated</response>
+        /// <response code="204">Movie updated - returns no content</response>
         /// <response code="400">Id param does not match Movie object Id</response>
         /// <response code="404">Movie not found in database</response>
+        /// <exception cref="DbUpdateConcurrencyException"></exception>
         // PUT: api/Movies/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -144,8 +145,9 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Movie Id</param>
         /// <param name="characterIds">Array of character Ids¨as integers</param>
         /// <returns></returns>
-        /// <response code="204">Characters assigned to movie</response>
+        /// <response code="204">Characters assigned to movie - returns no content</response>
         /// <response code="400">Movie Id invalid</response>
+        /// <exception cref="DbUpdateConcurrencyException"></exception>
         [HttpPut("{id}/characters")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -194,6 +196,7 @@ namespace Assignment3MovieApi.Controllers
             var domainMovie = _mapper.Map<MovieCreateDTO, Movie>(movie);
 
             _context.Movies.Add(domainMovie);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMovie", new { id = domainMovie.Id }, domainMovie);
@@ -204,7 +207,7 @@ namespace Assignment3MovieApi.Controllers
         /// </summary>
         /// <param name="id">Movie Id as integer</param>
         /// <returns>No content</returns>
-        /// <response code="204">Movie deleted</response>
+        /// <response code="204">Movie deleted - returns no content</response>
         /// <response code="404">Movie not found</response>
         // DELETE: api/Movies/5
         [HttpDelete("{id}")]

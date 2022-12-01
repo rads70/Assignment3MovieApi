@@ -68,9 +68,10 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">character Id</param>
         /// <param name="character">full character object</param>
         /// <returns>No content</returns>
-        /// <response code="204">Returns no content</response>
+        /// <response code="204">Character updated - returns no content</response>
         /// <response code="400">Id param does not match character id in object</response>
-        /// <response code="404">If character not found</response>
+        /// <response code="404">Character not found</response>
+        /// <exception cref="DbUpdateConcurrencyException"></exception>
         // PUT: api/Characters/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -131,7 +132,7 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Character Id</param>
         /// <returns></returns>
         /// <response code="204">Returns no content</response>
-        /// <response code="404">If character not found in database</response>
+        /// <response code="404">Character not found in database</response>
         // DELETE: api/Characters/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

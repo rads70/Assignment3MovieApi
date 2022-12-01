@@ -32,7 +32,7 @@ namespace Assignment3MovieApi.Controllers
         /// Get all franchises in database
         /// </summary>
         /// <returns>All Franchsises in database</returns>
-        /// <reponse code="200">Returns franchises in database</reponse>
+        /// <response code="200">Returns array of franchises</response>
         // GET: api/Franchises
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -49,8 +49,8 @@ namespace Assignment3MovieApi.Controllers
         /// </summary>
         /// <param name="id">Franchise Id</param>
         /// <returns>Franchise</returns>
-        /// <reponse code="200">Returns franchise object</reponse>
-        /// <reponse code="404">Franchise not found</reponse>
+        /// <response code="200">Returns franchise object</response>
+        /// <response code="404">Franchise not found</response>
         // GET: api/Franchises/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -72,9 +72,9 @@ namespace Assignment3MovieApi.Controllers
         /// </summary>
         /// <param name="id">Franchise Id</param>
         /// <returns>Movies from the selected franchise</returns>
-        /// <reponse code="200">Returns movies in selected franchise</reponse>
+        /// <response code="200">Returns movies in selected franchise</response>
         //GET: api/Franchises/Movies/5
-        [HttpGet("Movies/{id}")]
+        [HttpGet("{id}/movies")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MovieReadDTO>>> GetFranchiseMovies(int id)
         {
@@ -90,9 +90,9 @@ namespace Assignment3MovieApi.Controllers
         /// </summary>
         /// <param name="id">Franchise Id</param>
         /// <returns>List of characters</returns>
-        /// <reponse code="200">Returns characters in the franchise</reponse>
-        /// <reponse code="400">Franchise does not exist</reponse>
-        [HttpGet("Characters/{id}")]
+        /// <response code="200">Returns characters in the franchise</response>
+        /// <response code="400">Franchise does not exist</response>
+        [HttpGet("{id}/characters")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<List<MovieCharacterReadDTO>>> GetFranchiseCharacters(int id)
@@ -121,7 +121,7 @@ namespace Assignment3MovieApi.Controllers
         /// </summary>
         /// <param name="franchise">Franchise object</param>
         /// <returns>Created franchise</returns>
-        /// <reponse code="201">Returns franchise object created</reponse>
+        /// <response code="201">Returns franchise object created</response>
         // POST: api/Franchises
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -150,9 +150,10 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Franchise Id</param>
         /// <param name="franchise">Complete franchise object</param>
         /// <returns></returns>
-        /// <response code="204">Franchise updated - no content</response>
+        /// <response code="204">Franchise updated - returns no content</response>
         /// <response code="400">id param doesn't match franchise object Id</response>
         /// <response code="404">Franchise not found</response>
+        /// <exception cref="DbUpdateConcurrencyException"></exception>
         // PUT: api/Franchises/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -194,10 +195,11 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Franchise Id</param>
         /// <param name="movieIds">Array of movie Ids</param>
         /// <returns> No Content</returns>
-        /// <response code="204">Movies assigned to franchise - no content</response>
-        /// <response code="400">Franchise Id doesn't exist in database</response>
+        /// <response code="204">Movies assigned to franchise - returns no content</response>
+        /// <response code="400">Invalid franchise Id</response>
         /// <response code="404">Movie Id not found in database</response>
-        [HttpPut("movies/{id}")]
+        /// <exception cref="DbUpdateConcurrencyException"></exception>
+        [HttpPut("{id}/movies")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
