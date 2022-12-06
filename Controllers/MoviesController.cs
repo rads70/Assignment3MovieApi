@@ -72,26 +72,23 @@ namespace Assignment3MovieApi.Controllers
         /// <param name="id">Movie Id</param>
         /// <returns>Characters in movie</returns>
         /// <response code="200">Returns characters in movie</response>
-        /// <response code="400">Invalid movie Id</response>
+        /// <response code="404">Movie not found</response>
         [HttpGet("{id}/characters")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<MovieCharacterReadDTO>>> GetMovieCharacters (int id)
         {
-            if (!MovieExists(id)) return BadRequest();
+            if (!MovieExists(id)) return NotFound();
 
             // Get all characters in a movie
-            var movie = await _context.Movies.Include(m => m.Characters).Where(m => m.Id == id).FirstOrDefaultAsync();
+            var movies = await _context.Movies
+                .Include(m => m.Characters)
+                .Where(m => m.Id == id)
+                .FirstOrDefaultAsync();
 
-            List<Character> domainCharacters = new List<Character>();
-            foreach(var character in movie.Characters)
-            {
-                domainCharacters.Add(character);  
-            }
+            var domainCharacters = movies.Characters.ToList();
 
-            var characters = _mapper.Map<List<MovieCharacterReadDTO>>(domainCharacters);
-
-            return characters;
+            return _mapper.Map<List<MovieCharacterReadDTO>>(domainCharacters);
            
         }
 

@@ -99,21 +99,21 @@ namespace Assignment3MovieApi.Controllers
         {
             if(!FranchiseExists(id)) return BadRequest();
 
-            var movies = await _context.Movies.Include(mo => mo.Characters).Where(mo => mo.FranchiseId == id).ToListAsync();
+            var movies = await _context.Movies
+                .Include(mo => mo.Characters)
+                .Where(mo => mo.FranchiseId == id)
+                .ToListAsync();
 
             List<Character> characters = new List<Character>();
 
             foreach (var mo in movies)
             {
-                foreach (var character in mo.Characters)
-                {
-                    characters.Add(character);
-                }
+                var movieCharacters = mo.Characters.ToList();
+                characters.AddRange(movieCharacters);
             }
 
-            return _mapper.Map<List<MovieCharacterReadDTO>>(characters);
-
-
+            // Return list without duplicates if character in several movies.
+            return _mapper.Map<List<MovieCharacterReadDTO>>(characters.Distinct());
         }
 
         /// <summary>
